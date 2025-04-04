@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: CC-BY-NC-SA-4.0
 
-/// ██████╗ ██╗  ██╗ █████╗ ██╗     ██╗     ███████╗███╗   ██╗ ██████╗ ███████╗    
-/// ██╔════╝██║  ██║██╔══██╗██║     ██║     ██╔════╝████╗  ██║██╔════╝ ██╔════╝    
-/// ██║     ███████║███████║██║     ██║     █████╗  ██╔██╗ ██║██║  ███╗█████╗      
-/// ██║     ██╔══██║██╔══██║██║     ██║     ██╔══╝  ██║╚██╗██║██║   ██║██╔══╝      
-/// ╚██████╗██║  ██║██║  ██║███████╗███████╗███████╗██║ ╚████║╚██████╔╝███████╗    
-/// ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝    
-                                                                               
-///  ██╗ █████╗                                                                    
-/// ███║██╔══██╗                                                                   
-/// ╚██║╚██████║                                                                   
-///  ██║ ╚═══██║                                                                   
-///  ██║ █████╔╝                                                                   
-///  ╚═╝ ╚════╝                                                                    
-                                                                               
+/// ██████╗ ██╗  ██╗ █████╗ ██╗     ██╗     ███████╗███╗   ██╗ ██████╗ ███████╗
+/// ██╔════╝██║  ██║██╔══██╗██║     ██║     ██╔════╝████╗  ██║██╔════╝ ██╔════╝
+/// ██║     ███████║███████║██║     ██║     █████╗  ██╔██╗ ██║██║  ███╗█████╗
+/// ██║     ██╔══██║██╔══██║██║     ██║     ██╔══╝  ██║╚██╗██║██║   ██║██╔══╝
+/// ╚██████╗██║  ██║██║  ██║███████╗███████╗███████╗██║ ╚████║╚██████╔╝███████╗
+/// ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝
+
+///  ██╗ █████╗
+/// ███║██╔══██╗
+/// ╚██║╚██████║
+///  ██║ ╚═══██║
+///  ██║ █████╔╝
+///  ╚═╝ ╚════╝
+
 pragma solidity ^0.8.20;
 
 /**
@@ -21,7 +21,11 @@ pragma solidity ^0.8.20;
  */
 contract Challenge19 {
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
@@ -62,7 +66,10 @@ contract Challenge19 {
         return true;
     }
 
-    function allowance(address owner, address spender) public view returns (uint256) {
+    function allowance(
+        address owner,
+        address spender
+    ) public view returns (uint256) {
         return _allowances[owner][spender];
     }
 
@@ -71,20 +78,37 @@ contract Challenge19 {
         return true;
     }
 
-    function transferFrom(address from, address to, uint256 value) public returns (bool) {
+    function transferFrom(
+        address from,
+        address to,
+        uint256 value
+    ) public returns (bool) {
         _spendAllowance(from, msg.sender, value);
         _transfer(from, to, value);
         return true;
     }
 
-    function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
-        _approve(msg.sender, spender, allowance(msg.sender, spender) + addedValue);
+    function increaseAllowance(
+        address spender,
+        uint256 addedValue
+    ) public returns (bool) {
+        _approve(
+            msg.sender,
+            spender,
+            allowance(msg.sender, spender) + addedValue
+        );
         return true;
     }
 
-    function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
+    function decreaseAllowance(
+        address spender,
+        uint256 subtractedValue
+    ) public returns (bool) {
         uint256 currentAllowance = allowance(msg.sender, spender);
-        require(currentAllowance >= subtractedValue, "ERC20: decreased allowance below zero");
+        require(
+            currentAllowance >= subtractedValue,
+            "ERC20: decreased allowance below zero"
+        );
         unchecked {
             _approve(msg.sender, spender, currentAllowance - subtractedValue);
         }
@@ -92,18 +116,19 @@ contract Challenge19 {
     }
 
     function _transfer(
-          address from,
-          address to,
-          uint256 amount
+        address from,
+        address to,
+        uint256 amount
     ) internal virtual {
         require(from != address(0), "ERC20: transfer from the zero address");
         require(to != address(0), "ERC20: transfer to the zero address");
-    
+
         uint256 fromBalance = _balances[from];
         uint256 toBalance = _balances[to];
-    
+
+        //SIG19 -01- we can use this hook to update balances or amount or reentrancy or other malicious code
         _beforeTokenTransfer(from, to, amount);
-    
+
         require(
             fromBalance >= amount,
             "ERC20: transfer amount exceeds balance"
@@ -114,9 +139,10 @@ contract Challenge19 {
             // decrementing then incrementing.
             _balances[to] = toBalance + amount;
         }
-    
+
         emit Transfer(from, to, amount);
-    
+
+        //SIG19 -02- we can use this hook to update balances or amount or reentrancy or other malicious code
         _afterTokenTransfer(from, to, amount);
     }
 
@@ -128,10 +154,17 @@ contract Challenge19 {
         emit Approval(owner, spender, value);
     }
 
-    function _spendAllowance(address tokenOwner, address spender, uint256 value) internal {
+    function _spendAllowance(
+        address tokenOwner,
+        address spender,
+        uint256 value
+    ) internal {
         uint256 currentAllowance = allowance(tokenOwner, spender);
         if (currentAllowance != type(uint256).max) {
-            require(currentAllowance >= value, "Challenge19: insufficient allowance");
+            require(
+                currentAllowance >= value,
+                "Challenge19: insufficient allowance"
+            );
             _allowances[tokenOwner][spender] = currentAllowance - value;
         }
     }
@@ -159,7 +192,15 @@ contract Challenge19 {
         emit Transfer(account, address(0), value);
     }
 
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual {}
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal virtual {}
 
-    function _afterTokenTransfer(address from, address to, uint256 amount) internal virtual {}
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal virtual {}
 }

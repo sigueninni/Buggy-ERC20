@@ -1,26 +1,30 @@
 // SPDX-License-Identifier: CC-BY-NC-SA-4.0
 
-/// ███████╗██╗███╗   ██╗ █████╗ ██╗                                           
-/// ██╔════╝██║████╗  ██║██╔══██╗██║                                           
-/// █████╗  ██║██╔██╗ ██║███████║██║                                           
-/// ██╔══╝  ██║██║╚██╗██║██╔══██║██║                                           
-/// ██║     ██║██║ ╚████║██║  ██║███████╗                                      
-/// ╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝                                      
-                                                                           
+/// ███████╗██╗███╗   ██╗ █████╗ ██╗
+/// ██╔════╝██║████╗  ██║██╔══██╗██║
+/// █████╗  ██║██╔██╗ ██║███████║██║
+/// ██╔══╝  ██║██║╚██╗██║██╔══██║██║
+/// ██║     ██║██║ ╚████║██║  ██║███████╗
+/// ╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝
+
 /// ██████╗ ██╗  ██╗ █████╗ ██╗     ██╗     ███████╗███╗   ██╗ ██████╗ ███████╗
 /// ██╔════╝██║  ██║██╔══██╗██║     ██║     ██╔════╝████╗  ██║██╔════╝ ██╔════╝
-/// ██║     ███████║███████║██║     ██║     █████╗  ██╔██╗ ██║██║  ███╗█████╗  
-/// ██║     ██╔══██║██╔══██║██║     ██║     ██╔══╝  ██║╚██╗██║██║   ██║██╔══╝  
+/// ██║     ███████║███████║██║     ██║     █████╗  ██╔██╗ ██║██║  ███╗█████╗
+/// ██║     ██╔══██║██╔══██║██║     ██║     ██╔══╝  ██║╚██╗██║██║   ██║██╔══╝
 /// ╚██████╗██║  ██║██║  ██║███████╗███████╗███████╗██║ ╚████║╚██████╔╝███████╗
 /// ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝
-                                                                           
+
 pragma solidity >=0.8.0;
 
 /// @notice Modern and gas efficient ERC20
 contract Challenge20 {
     event Transfer(address indexed from, address indexed to, uint256 amount);
 
-    event Approval(address indexed owner, address indexed spender, uint256 amount);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 amount
+    );
 
     string public name;
 
@@ -40,7 +44,10 @@ contract Challenge20 {
         decimals = _decimals;
     }
 
-    function approve(address spender, uint256 amount) public virtual returns (bool) {
+    function approve(
+        address spender,
+        uint256 amount
+    ) public virtual returns (bool) {
         allowance[msg.sender][spender] = amount;
 
         emit Approval(msg.sender, spender, amount);
@@ -48,7 +55,10 @@ contract Challenge20 {
         return true;
     }
 
-    function transfer(address to, uint256 amount) public virtual returns (bool) {
+    function transfer(
+        address to,
+        uint256 amount
+    ) public virtual returns (bool) {
         balanceOf[msg.sender] -= amount;
 
         unchecked {
@@ -60,10 +70,16 @@ contract Challenge20 {
         return true;
     }
 
-    function transferFrom(address from, address to, uint256 amount) public virtual returns (bool) {
+    function transferFrom(
+        address from,
+        address to,
+        uint256 amount
+    ) public virtual returns (bool) {
         uint256 allowed = allowance[from][msg.sender];
 
-        if (allowed != type(uint256).max) allowance[from][msg.sender] = allowed + amount;
+        //SIG20 -01- allowance should decrease
+        if (allowed != type(uint256).max)
+            allowance[from][msg.sender] = allowed + amount;
 
         balanceOf[from] -= amount;
 

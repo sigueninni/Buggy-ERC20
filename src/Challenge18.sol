@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: CC-BY-NC-SA-4.0
 
-/// ██████╗ ██╗  ██╗ █████╗ ██╗     ██╗     ███████╗███╗   ██╗ ██████╗ ███████╗    
-/// ██╔════╝██║  ██║██╔══██╗██║     ██║     ██╔════╝████╗  ██║██╔════╝ ██╔════╝    
-/// ██║     ███████║███████║██║     ██║     █████╗  ██╔██╗ ██║██║  ███╗█████╗      
-/// ██║     ██╔══██║██╔══██║██║     ██║     ██╔══╝  ██║╚██╗██║██║   ██║██╔══╝      
-/// ╚██████╗██║  ██║██║  ██║███████╗███████╗███████╗██║ ╚████║╚██████╔╝███████╗    
-/// ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝    
-                                                                               
-///  ██╗ █████╗                                                                    
-/// ███║██╔══██╗                                                                   
-/// ╚██║╚█████╔╝                                                                   
-///  ██║██╔══██╗                                                                   
-///  ██║╚█████╔╝                                                                   
-///  ╚═╝ ╚════╝                                                                    
-                                                                               
+/// ██████╗ ██╗  ██╗ █████╗ ██╗     ██╗     ███████╗███╗   ██╗ ██████╗ ███████╗
+/// ██╔════╝██║  ██║██╔══██╗██║     ██║     ██╔════╝████╗  ██║██╔════╝ ██╔════╝
+/// ██║     ███████║███████║██║     ██║     █████╗  ██╔██╗ ██║██║  ███╗█████╗
+/// ██║     ██╔══██║██╔══██║██║     ██║     ██╔══╝  ██║╚██╗██║██║   ██║██╔══╝
+/// ╚██████╗██║  ██║██║  ██║███████╗███████╗███████╗██║ ╚████║╚██████╔╝███████╗
+/// ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝
+
+///  ██╗ █████╗
+/// ███║██╔══██╗
+/// ╚██║╚█████╔╝
+///  ██║██╔══██╗
+///  ██║╚█████╔╝
+///  ╚═╝ ╚════╝
+
 pragma solidity ^0.8.20;
 
 /**
@@ -22,7 +22,11 @@ pragma solidity ^0.8.20;
  */
 contract Challenge18 {
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
@@ -63,7 +67,10 @@ contract Challenge18 {
         return true;
     }
 
-    function allowance(address owner, address spender) public view returns (uint256) {
+    function allowance(
+        address owner,
+        address spender
+    ) public view returns (uint256) {
         return _allowances[owner][spender];
     }
 
@@ -72,20 +79,37 @@ contract Challenge18 {
         return true;
     }
 
-    function transferFrom(address from, address to, uint256 value) public returns (bool) {
+    function transferFrom(
+        address from,
+        address to,
+        uint256 value
+    ) public returns (bool) {
         _spendAllowance(from, msg.sender, value);
         _transfer(from, to, value);
         return true;
     }
 
-    function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
-        _approve(msg.sender, spender, allowance(msg.sender, spender) + addedValue);
+    function increaseAllowance(
+        address spender,
+        uint256 addedValue
+    ) public returns (bool) {
+        _approve(
+            msg.sender,
+            spender,
+            allowance(msg.sender, spender) + addedValue
+        );
         return true;
     }
 
-    function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
+    function decreaseAllowance(
+        address spender,
+        uint256 subtractedValue
+    ) public returns (bool) {
         uint256 currentAllowance = allowance(msg.sender, spender);
-        require(currentAllowance >= subtractedValue, "ERC20: decreased allowance below zero");
+        require(
+            currentAllowance >= subtractedValue,
+            "ERC20: decreased allowance below zero"
+        );
         unchecked {
             _approve(msg.sender, spender, currentAllowance - subtractedValue);
         }
@@ -114,14 +138,22 @@ contract Challenge18 {
         emit Approval(owner, spender, value);
     }
 
-    function _spendAllowance(address tokenOwner, address spender, uint256 value) internal {
+    function _spendAllowance(
+        address tokenOwner,
+        address spender,
+        uint256 value
+    ) internal {
         uint256 currentAllowance = allowance(tokenOwner, spender);
         if (currentAllowance != type(uint256).max) {
-            require(currentAllowance >= value, "Challenge18: insufficient allowance");
+            require(
+                currentAllowance >= value,
+                "Challenge18: insufficient allowance"
+            );
             _allowances[tokenOwner][spender] = currentAllowance - value;
         }
     }
 
+    //SIG19 -01- totalSupply not updated
     function _mint(address account, uint256 value) internal {
         require(account != address(0), "ERC20: mint to the zero address");
 
